@@ -264,6 +264,15 @@ then
 fi
 
 
+# DM-EVENTD
+if grep -q "/sbin/dmeventd$" $TMPFILE2
+then
+    echo "#### restarting dm-event: "
+    service dm-event restart
+    DONESPECIFIC=1
+fi
+
+
 
 # End of specific process management:
 if [ "$DONESPECIFIC" != "0" ]
