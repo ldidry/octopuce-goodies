@@ -200,6 +200,8 @@ then
     FAIL2BANFOUND=0
     FAIL2BANPID=""
     MAILMANFOUND=0
+    SALTMINIONFOUND=0
+    SALTMASTERFOUND=0
     for pid in $(grep "/usr/bin/python2.7$" $TMPFILE2|awk '{print $1}')
     do
 	# python launched as /usr/bin/fail2ban-server
@@ -215,6 +217,16 @@ then
 	then
 	    MAILMANFOUND=1
 	fi
+
+	if [ "$(ps auxwww|grep "$pid"|grep "/usr/bin/salt-minion")" ]
+	then
+	    SALTMINIONFOUND=1
+	fi
+
+	if [ "$(ps auxwww|grep "$pid"|grep "/usr/bin/salt-master")" ]
+	then
+	    SALTMASTERFOUND=1
+	fi
     done
     if [ "$FAIL2BANFOUND" -eq "1" ]
     then
@@ -226,6 +238,18 @@ then
     then
 	echo "#### restarting mailman: "
 	service mailman restart
+	DONESPECIFIC=1
+    fi
+    if [ "$SALTMINIONFOUND" -eq "1" ]
+    then
+	echo "#### restarting salt-minion: "
+	service salt-minion restart
+	DONESPECIFIC=1
+    fi
+    if [ "$SALTMASTERFOUND" -eq "1" ]
+    then
+	echo "#### restarting salt-master: "
+	service salt-master restart
 	DONESPECIFIC=1
     fi
 fi
