@@ -255,6 +255,13 @@ then
 fi
 
 
+# JOURNALD
+if grep -q "/lib/systemd/systemd-journald$" $TMPFILE2
+then
+    echo "#### restarting journald: "
+    service systemd-journald restart
+    DONESPECIFIC=1
+fi
 
 
 
